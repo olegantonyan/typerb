@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe Typerb do
   it 'has a version number' do
     expect(Typerb::VERSION).not_to be nil
