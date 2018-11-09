@@ -35,11 +35,22 @@ gem 'typerb'
 
 And then execute:
 
-    $ bundle
+    $ bundle install
 
 Or install it yourself as:
 
     $ gem install typerb
+
+If this fails with error
+```
+ERROR:  Error installing typerb:
+        There are no versions of typerb (>= 0) compatible with your Ruby & RubyGems
+        typerb requires Ruby version >= 2.6.0.pre.preview3. The current ruby version is 2.6.0.
+```
+even when you have Ruby 2.6.0-preview3 installed, then try installing it through Gemfile from git:
+```ruby
+gem 'typerb', github: 'olegantonyan/typerb'
+```
 
 ## Usage
 
