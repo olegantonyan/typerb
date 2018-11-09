@@ -18,7 +18,7 @@ RSpec.describe Typerb do
         @arg = arg
       end
     end
-    expect { kls.new('hello') }.to raise_error(TypeError, '`arg` should be Integer, not String')
+    expect { kls.new('hello') }.to raise_error(TypeError, '`arg` should be Integer, not String (hello)')
     expect { kls.new(123) }.not_to raise_error
   end
 
@@ -32,9 +32,9 @@ RSpec.describe Typerb do
         arg3.type!(Hash)
       end
     end
-    expect { kls.new('hello', 1, {}) }.to raise_error(TypeError, '`arg1` should be Numeric, not String')
-    expect { kls.new(1, 123, {}) }.to raise_error(TypeError, '`arg2` should be String, not Integer')
-    expect { kls.new(1, '123', nil) }.to raise_error(TypeError, '`arg3` should be Hash, not NilClass')
+    expect { kls.new('hello', 1, {}) }.to raise_error(TypeError, '`arg1` should be Numeric, not String (hello)')
+    expect { kls.new(1, 123, {}) }.to raise_error(TypeError, '`arg2` should be String, not Integer (123)')
+    expect { kls.new(1, '123', nil) }.to raise_error(TypeError, '`arg3` should be Hash, not NilClass ()')
     expect { kls.new(123, 'hello', { o: 1 }) }.not_to raise_error
   end
 
@@ -50,7 +50,7 @@ RSpec.describe Typerb do
         @arg = arg
       end
     end
-    expect { kls.new('hello') }.to raise_error(TypeError, '`arg` should be Integer, not String')
+    expect { kls.new('hello') }.to raise_error(TypeError, '`arg` should be Integer, not String (hello)')
     expect { kls.new(123) }.not_to raise_error
   end
 
@@ -65,7 +65,34 @@ RSpec.describe Typerb do
     end
     expect { kls.new(123) }.not_to raise_error
     expect { kls.new('123') }.not_to raise_error
-    expect { kls.new({}) }.to raise_error(TypeError, '`arg` should be Integer or String, not Hash')
+    expect { kls.new({hello: 123}) }.to raise_error(TypeError, '`arg` should be Integer or String, not Hash ({:hello=>123})')
+  end
+
+  it '(kind of) works with multiple args on the same line 1', multiline: true do
+    kls = Class.new do
+      using Typerb
+
+      def initialize(arg1, arg2)
+        arg1.type!(Integer); arg2.type!(String)
+      end
+    end
+    expect { kls.new(1, 2) }.to raise_error(TypeError, 'expected String, got Integer (2)')
+    expect { kls.new({}, '') }.to raise_error(TypeError, 'expected Integer, got Hash ({})')
+  end
+
+  it '(kind of) works with multiple args on the same line 2', multiline: true do
+    kls = Class.new do
+      using Typerb
+
+      def initialize(arg1, arg2, arg3, arg4)
+        arg1.type!(Integer); arg2.type!(String); arg3.type!(String)
+        arg4.type!(Hash)
+      end
+    end
+    expect { kls.new(1, 2, '1', {}) }.to raise_error(TypeError, 'expected String, got Integer (2)')
+    expect { kls.new({}, '', '', {}) }.to raise_error(TypeError, 'expected Integer, got Hash ({})')
+    expect { kls.new(1, '', 2, {}) }.to raise_error(TypeError, 'expected String, got Integer (2)')
+    expect { kls.new(1, '', '', 1) }.to raise_error(TypeError, '`arg4` should be Hash, not Integer (1)')
   end
 
   it 'raises ArgumentError if no classes given' do

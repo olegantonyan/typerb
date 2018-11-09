@@ -77,7 +77,7 @@ class A
 
   def call(some_arg)
     some_arg.
-            type!(String) # this won't work. type!() call must be on the same line with the variable it's called on
+            type!(String) # this won't work. type!() call must be on the same line with the variable it's called on - raise error message without variable name
                           # some_arg.    type!(String) is ok though
   end
 end
@@ -93,6 +93,17 @@ end
 [1] pry(main)* end  
 [2] pry(main)> A.new.call(1)
 TypeError: expected Hash, got Integer  # here we cannot get the source code for a line containing "a.type!(Hash)", so cannot see the variable name
+```
+
+3. Multiple arguments on the same line:
+```ruby
+class A
+  using Typerb
+
+  def initialize(arg1, arg2)
+    arg1.type!(Integer); arg2.type!(String) # no way to tell the variable - raise error message without variable name
+  end
+end
 ```
 
 These limitations shouldn't be a problem in any case. Please, file an issue if you know a scenario where one of these could be a real problem.
