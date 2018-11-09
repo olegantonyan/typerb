@@ -1,3 +1,5 @@
+[![Gem Version](https://badge.fury.io/rb/typerb.svg)](https://badge.fury.io/rb/typerb)
+
 # Typerb
 
 Proof of concept type-checking library for Ruby 2.6.
