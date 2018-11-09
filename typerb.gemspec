@@ -27,6 +27,8 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rspec', '>= 3.0'
   spec.add_development_dependency 'super_awesome_print'
   spec.add_development_dependency 'pry'
+  spec.add_development_dependency 'guard'
+  spec.add_development_dependency 'guard-rspec'
 
   spec.required_ruby_version = '>= 2.6.0-preview3'
 end
