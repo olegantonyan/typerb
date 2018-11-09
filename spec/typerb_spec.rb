@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Typerb do
+RSpec.describe Typerb do # rubocop: disable Metrics/BlockLength
   it 'has a version number' do
     expect(Typerb::VERSION).not_to be nil
   end
@@ -35,7 +35,7 @@ RSpec.describe Typerb do
     expect { kls.new('hello', 1, {}) }.to raise_error(TypeError, '`arg1` should be Numeric, not String (hello)')
     expect { kls.new(1, 123, {}) }.to raise_error(TypeError, '`arg2` should be String, not Integer (123)')
     expect { kls.new(1, '123', nil) }.to raise_error(TypeError, '`arg3` should be Hash, not NilClass ()')
-    expect { kls.new(123, 'hello', { o: 1 }) }.not_to raise_error
+    expect { kls.new(123, 'hello', o: 1) }.not_to raise_error
   end
 
   it 'raises TypeError for wrong type and ugly syntax' do
@@ -43,7 +43,7 @@ RSpec.describe Typerb do
       using Typerb
 
       def initialize(arg)
-        arg.                type!(Integer)
+        arg.                type!(Integer) # rubocop: disable Layout/ExtraSpacing
         # NOTE cannot split into multiline, i.e. this will not work
         # arg.
         #    type!(Integer)
@@ -65,7 +65,7 @@ RSpec.describe Typerb do
     end
     expect { kls.new(123) }.not_to raise_error
     expect { kls.new('123') }.not_to raise_error
-    expect { kls.new({hello: 123}) }.to raise_error(TypeError, '`arg` should be Integer or String, not Hash ({:hello=>123})')
+    expect { kls.new(hello: 123) }.to raise_error(TypeError, '`arg` should be Integer or String, not Hash ({:hello=>123})')
   end
 
   it '(kind of) works with multiple args on the same line 1', multiline: true do
