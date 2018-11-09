@@ -25,5 +25,16 @@ module Typerb
       exception.set_backtrace(caller)
       raise exception
     end
+
+    def should_respond_to!(*methods)
+      raise ArgumentError, 'provide at least one method' if methods.empty?
+      return if methods.all? { |meth| respond_to?(meth) }
+
+      exception_text = "#{self.class} should respond to all methods: " + methods.join(', ')
+      exception = TypeError.new(exception_text)
+      exception.set_backtrace(caller)
+      raise exception
+    end
+
   end
 end
