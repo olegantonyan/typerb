@@ -6,19 +6,29 @@ Proof of concept type-checking library for Ruby 2.6.
 class A
   using Typerb
 
-  def call(some_arg)
+  def strong_type_call(some_arg)
     some_arg.type!(String, Symbol)
   end
+
+  def call_like_interface(some_arg)
+    some_arg.should_respond_to!(:strip)
+  end
+
 end
 
-A.new.call(1) #=> TypeError: '`some_arg` should be String or Symbol, not Integer'
+A.new.strong_type_call(1)  #=> TypeError: '`some_arg` should be String or Symbol, not Integer'
+A.new.call_like_interface(1) #=> TypeError: 'Integer should respond to all methods: strip'
 ```
 
 This is equivalent to:
 ```ruby
 class A
-  def call(some_arg)
+  def strong_type_call(some_arg)
     raise TypeError, "`some_arg` should be String or Symbol, not #{some_arg.class}" unless [String, Symbol].include?(some_arg.class)
+  end
+
+  def call_like_interface(some_arg)
+    raise TypeError, "#{some_arg.class} should respond to all methods: strip" unless [:strip].all{|meth| some_arg.respond_to?(meth)}
   end
 end
 ```
@@ -89,8 +99,8 @@ end
 [1] pry(main)*   using Typerb
 [1] pry(main)*   def call(a)
 [1] pry(main)*     a.type!(Hash)
-[1] pry(main)*   end  
-[1] pry(main)* end  
+[1] pry(main)*   end
+[1] pry(main)* end
 [2] pry(main)> A.new.call(1)
 TypeError: expected Hash, got Integer  # here we cannot get the source code for a line containing "a.type!(Hash)", so cannot see the variable name
 ```
