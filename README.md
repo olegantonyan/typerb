@@ -14,7 +14,7 @@ class A
   end
 end
 
-A.new.call(1) #=> TypeError: '`some_arg` should be String or Symbol, not Integer'
+A.new.call(1) #=> TypeError: `some_arg` should be String or Symbol, not Integer
 ```
 
 This is equivalent to:
@@ -27,6 +27,20 @@ end
 ```
 
 But without boilerplate.
+
+It also has `not_nil!` method, similar to Crystal language.
+
+```ruby
+class A
+  using Typerb
+
+  def call(some_arg)
+    some_arg.not_nil!
+  end
+end
+
+A.new.call(nil) #=> TypeError: expected not nil, but got nil
+```
 
 ## Installation
 
@@ -60,6 +74,19 @@ gem 'typerb', github: 'olegantonyan/typerb'
 1. Add `using Typerb` to a class where you want to have type check.
 2. Call `.type!()` on any object to assert its type.
 3. PROFIT! No more "NoMethodError for nil" 10 methods up the stack. You'll know exactly where this nil came from.
+
+```ruby
+class A
+  using Typerb
+
+  attr_reader :param, :another_param
+
+  def initialize(param, another_param)
+    @param = param.type!(String)
+    @another_param = another_param.not_nil!
+  end
+end
+```
 
 If you're unfamiliar with `using` keyword - this is refinement - a relatively new feature in Ruby (since 2.0). It's kind of monkey-patch, but with strict scope. Learn more about [refinements](https://ruby-doc.org/core-2.5.3/doc/syntax/refinements_rdoc.html).
 

@@ -68,7 +68,7 @@ RSpec.describe Typerb do # rubocop: disable Metrics/BlockLength
     expect { kls.new(hello: 123) }.to raise_error(TypeError, '`arg` should be Integer or String, not Hash ({:hello=>123})')
   end
 
-  it '(kind of) works with multiple args on the same line 1', multiline: true do
+  it '(kind of) works with multiple args on the same line 1' do
     kls = Class.new do
       using Typerb
 
@@ -115,5 +115,32 @@ RSpec.describe Typerb do # rubocop: disable Metrics/BlockLength
       end
     end
     expect { kls.new(1) }.to raise_error(NameError)
+  end
+
+  it 'not_nil! works' do
+    kls = Class.new do
+      using Typerb
+
+      def initialize(arg1)
+        arg1.not_nil!
+      end
+    end
+    expect { kls.new(nil) }.to raise_error(TypeError, '`arg1` should not be nil')
+    expect { kls.new(1) }.not_to raise_error
+  end
+
+  it 'returns self' do
+    kls = Class.new do
+      using Typerb
+
+      attr_reader :arg1, :arg2
+
+      def initialize(arg1, arg2)
+        @arg1 = arg1.not_nil!
+        @arg2 = arg2.type!(String)
+      end
+    end
+    expect(kls.new(1, '1').arg1).to eq 1
+    expect(kls.new(1, '1').arg2).to eq '1'
   end
 end
