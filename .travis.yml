@@ -5,9 +5,8 @@ cache: bundler
 before_install: gem install bundler
 
 rvm:
-  - 2.3.0
+  - 2.4.0
   - 2.5.3
-  - ruby-head
 #  - 2.6.0-preview3 travis does not support it yet
 
 script:
