@@ -14,7 +14,11 @@ RSpec.describe Typerb do # rubocop: disable Metrics/BlockLength
         @arg = arg
       end
     end
-    expect { kls.new('hello') }.to raise_error(TypeError, '`arg` should be Integer, not String (hello)')
+    if RUBY_VERSION >= '2.6.0'
+      expect { kls.new('hello') }.to raise_error(TypeError, '`arg` should be Integer, not String (hello)')
+    else
+      expect { kls.new('hello') }.to raise_error(TypeError, 'expected Integer, got String (hello)')
+    end
     expect { kls.new(123) }.not_to raise_error
   end
 
@@ -28,9 +32,15 @@ RSpec.describe Typerb do # rubocop: disable Metrics/BlockLength
         arg3.type!(Hash)
       end
     end
-    expect { kls.new('hello', 1, {}) }.to raise_error(TypeError, '`arg1` should be Numeric, not String (hello)')
-    expect { kls.new(1, 123, {}) }.to raise_error(TypeError, '`arg2` should be String, not Integer (123)')
-    expect { kls.new(1, '123', nil) }.to raise_error(TypeError, '`arg3` should be Hash, not NilClass ()')
+    if RUBY_VERSION >= '2.6.0'
+      expect { kls.new('hello', 1, {}) }.to raise_error(TypeError, '`arg1` should be Numeric, not String (hello)')
+      expect { kls.new(1, 123, {}) }.to raise_error(TypeError, '`arg2` should be String, not Integer (123)')
+      expect { kls.new(1, '123', nil) }.to raise_error(TypeError, '`arg3` should be Hash, not NilClass ()')
+    else
+      expect { kls.new('hello', 1, {}) }.to raise_error(TypeError, 'expected Numeric, got String (hello)')
+      expect { kls.new(1, 123, {}) }.to raise_error(TypeError, 'expected String, got Integer (123)')
+      expect { kls.new(1, '123', nil) }.to raise_error(TypeError, 'expected Hash, got NilClass ()')
+    end
     expect { kls.new(123, 'hello', o: 1) }.not_to raise_error
   end
 
@@ -46,7 +56,11 @@ RSpec.describe Typerb do # rubocop: disable Metrics/BlockLength
         @arg = arg
       end
     end
-    expect { kls.new('hello') }.to raise_error(TypeError, '`arg` should be Integer, not String (hello)')
+    if RUBY_VERSION >= '2.6.0'
+      expect { kls.new('hello') }.to raise_error(TypeError, '`arg` should be Integer, not String (hello)')
+    else
+      expect { kls.new('hello') }.to raise_error(TypeError, 'expected Integer, got String (hello)')
+    end
     expect { kls.new(123) }.not_to raise_error
   end
 
@@ -61,7 +75,11 @@ RSpec.describe Typerb do # rubocop: disable Metrics/BlockLength
     end
     expect { kls.new(123) }.not_to raise_error
     expect { kls.new('123') }.not_to raise_error
-    expect { kls.new(hello: 123) }.to raise_error(TypeError, '`arg` should be Integer or String, not Hash ({:hello=>123})')
+    if RUBY_VERSION >= '2.6.0'
+      expect { kls.new(hello: 123) }.to raise_error(TypeError, '`arg` should be Integer or String, not Hash ({:hello=>123})')
+    else
+      expect { kls.new(hello: 123) }.to raise_error(TypeError, 'expected Integer or String, got Hash ({:hello=>123})')
+    end
   end
 
   it '(kind of) works with multiple args on the same line 1' do
@@ -88,7 +106,11 @@ RSpec.describe Typerb do # rubocop: disable Metrics/BlockLength
     expect { kls.new(1, 2, '1', {}) }.to raise_error(TypeError, 'expected String, got Integer (2)')
     expect { kls.new({}, '', '', {}) }.to raise_error(TypeError, 'expected Integer, got Hash ({})')
     expect { kls.new(1, '', 2, {}) }.to raise_error(TypeError, 'expected String, got Integer (2)')
-    expect { kls.new(1, '', '', 1) }.to raise_error(TypeError, '`arg4` should be Hash, not Integer (1)')
+    if RUBY_VERSION >= '2.6.0'
+      expect { kls.new(1, '', '', 1) }.to raise_error(TypeError, '`arg4` should be Hash, not Integer (1)')
+    else
+      expect { kls.new(1, '', '', 1) }.to raise_error(TypeError, 'expected Hash, got Integer (1)')
+    end
   end
 
   it 'raises ArgumentError if no classes given' do
@@ -121,7 +143,11 @@ RSpec.describe Typerb do # rubocop: disable Metrics/BlockLength
         arg1.not_nil!
       end
     end
-    expect { kls.new(nil) }.to raise_error(TypeError, '`arg1` should not be nil')
+    if RUBY_VERSION >= '2.6.0'
+      expect { kls.new(nil) }.to raise_error(TypeError, '`arg1` should not be nil')
+    else
+      expect { kls.new(nil) }.to raise_error(TypeError, 'expected not nil, got nil')
+    end
     expect { kls.new(1) }.not_to raise_error
   end
 
