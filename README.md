@@ -107,8 +107,9 @@ class A
 
   def call(some_arg)
     some_arg.
-            type!(String) # this won't work. type!() call must be on the same line with the variable it's called on - raise error message without variable name
-                          # some_arg.    type!(String) is ok though
+            type!(String)
+    # this won't work. type!() call must be on the same line with the variable it's called on - raise error message without variable name
+    # some_arg.    type!(String) is ok though
   end
 end
 ```
@@ -122,7 +123,8 @@ end
 [1] pry(main)*   end  
 [1] pry(main)* end  
 [2] pry(main)> A.new.call(1)
-TypeError: expected Hash, got Integer  # here we cannot get the source code for a line containing "a.type!(Hash)", so cannot see the variable name
+TypeError: expected Hash, got Integer  
+# here we cannot get the source code for a line containing "a.type!(Hash)", so cannot see the variable name
 ```
 
 3. Multiple arguments on the same line:
