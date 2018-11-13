@@ -13,3 +13,6 @@ Style/Semicolon:
 
 Metrics/LineLength:
   Max: 170
+
+Gemspec/RequiredRubyVersion:
+  Enabled: false

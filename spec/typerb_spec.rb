@@ -5,10 +5,6 @@ RSpec.describe Typerb do # rubocop: disable Metrics/BlockLength
     expect(Typerb::VERSION).not_to be nil
   end
 
-  it 'has RubyVM::AST' do
-    expect(RubyVM::AST.parse('1 + 2').children.size).to eq(3)
-  end
-
   it 'raises TypeError for wrong type' do
     kls = Class.new do
       using Typerb
