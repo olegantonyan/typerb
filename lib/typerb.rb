@@ -1,32 +1,38 @@
 # frozen_string_literal: true
 
 require 'typerb/version'
+require 'typerb/variable_name'
+require 'typerb/exceptional'
 
 module Typerb
   refine Object do
     def type!(*klasses)
       raise ArgumentError, 'provide at least one class' if klasses.empty?
-      return if klasses.any? { |kls| is_a?(kls) }
+      return self if klasses.any? { |kls| is_a?(kls) }
 
-      kls_text = klasses.size > 1 ? klasses.map(&:name).join(' or ') : klasses.first.name
+      klasses_text = Typerb::Exceptional.klasses_text(klasses)
+      exception_text = if (var_name = Typerb::VariableName.new(caller_locations(1, 1)).get)
+                         "`#{var_name}` should be #{klasses_text}, not #{self.class} (#{self})"
+                       else
+                         "expected #{klasses_text}, got #{self.class} (#{self})"
+                       end
 
-      where = caller_locations(1, 1)[0]
-      file = where.path
-      line = where.lineno
-      if File.exist?(file)
-        code = File.read(file).lines[line - 1].strip
-        node = RubyVM::AST.parse(code)
-        var_name = node.children.last.children.first.children.first
-        exception_text = "`#{var_name}` should be #{kls_text}, not #{self.class}"
-      else # probably in console
-        exception_text = "expected #{kls_text}, got #{self.class}"
-      end
-      exception = TypeError.new(exception_text)
-      exception.set_backtrace(caller)
-      raise exception
+      Typerb::Exceptional.new.raise_with(caller, exception_text)
     end
 
-    def should_respond_to!(*methods)
+    def not_nil!
+      return self unless self.nil? # rubocop: disable Style/RedundantSelf rubocop breaks without reundant self
+
+      exception_text = if (var_name = Typerb::VariableName.new(caller_locations(1, 1)).get)
+                         "`#{var_name}` should not be nil"
+                       else
+                         'expected not nil, got nil'
+                       end
+
+      Typerb::Exceptional.new.raise_with(caller, exception_text)
+    end
+
+    def respond_to!(*methods)
       raise ArgumentError, 'provide at least one method' if methods.empty?
       return if methods.all? { |meth| respond_to?(meth) }
 

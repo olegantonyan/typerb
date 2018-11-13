@@ -1,4 +1,6 @@
-lib = File.expand_path('../lib', __FILE__)
+# frozen_string_literal: true
+
+lib = File.expand_path('lib', __dir__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'typerb/version'
 
@@ -8,8 +10,8 @@ Gem::Specification.new do |spec|
   spec.authors       = ['Oleg Antonyan']
   spec.email         = ['oleg.b.antonyan@gmail.com']
 
-  spec.summary       = %q(Typecheck sugar for Ruby.)
-  spec.description   = %q(Typecheck sugar for Ruby.)
+  spec.summary       = 'Typecheck sugar for Ruby.'
+  spec.description   = 'Typecheck sugar for Ruby.'
   spec.homepage      = 'https://github.com/olegantonyan/typerb'
   spec.license       = 'MIT'
 
@@ -23,12 +25,13 @@ Gem::Specification.new do |spec|
   spec.require_paths = ['lib']
 
   spec.add_development_dependency 'bundler', '>= 1.17'
+  spec.add_development_dependency 'pry'
   spec.add_development_dependency 'rake', '>= 10.0'
   spec.add_development_dependency 'rspec', '>= 3.0'
+  spec.add_development_dependency 'rubocop'
   spec.add_development_dependency 'super_awesome_print'
-  spec.add_development_dependency 'pry'
   spec.add_development_dependency 'guard'
   spec.add_development_dependency 'guard-rspec'
 
-  spec.required_ruby_version = '>= 2.6.0-preview3'
+  spec.required_ruby_version = '>= 2.4'
 end

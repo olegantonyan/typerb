@@ -1,0 +1,20 @@
+AllCops:
+  TargetRubyVersion: 2.4
+  Exclude:
+    - 'bin/**/*'
+
+inherit_mode:
+  merge:
+    - Exclude
+
+Style/CommentedKeyword:
+  Enabled: false
+
+Style/Documentation:
+  Enabled: false
+
+Style/Semicolon:
+  Enabled: false
+
+Metrics/LineLength:
+  Max: 170
