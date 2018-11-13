@@ -3,7 +3,7 @@
 
 # Typerb
 
-Proof of concept type-checking library for Ruby 2.6.
+Proof of concept type-checking library for Ruby 2.6. Works with previous versions too with some limitation (see below).
 
 ```ruby
 class A
@@ -90,13 +90,13 @@ end
 
 If you're unfamiliar with `using` keyword - this is refinement - a relatively new feature in Ruby (since 2.0). It's kind of monkey-patch, but with strict scope. Learn more about [refinements](https://ruby-doc.org/core-2.5.3/doc/syntax/refinements_rdoc.html).
 
-This refinement adds `type!()` method to `Object` class so you can call it on almost much any object (except those inherited from `BasicObject`, but these are rare).
+This refinement adds `type!()` and `not_nil!` methods to `Object` class so you can call it on almost much any object (except those inherited from `BasicObject`, but these are rare).
 
 The method will raise an exception if `self` is not an instance of one of the classes passed as arguments. The tricky part, however, is to get the variable name on which it's called. You need this to get a nice error message telling you exactly which variable has wrong type, not just an abstract `TypeError`. That's why we need Ruby 2.6 with its new `RubyVM::AST` (https://ruby-doc.org/core-2.6.0.preview3/RubyVM/AST.html).
 
 ## Limitations
 
-It requires Ruby 2.6.0-preview3. Relies on `RubyVM::AST` which may change in release version. So, expect breaking changes in Ruby.
+Full functionality Ruby 2.6.0-preview3. Relies on `RubyVM::AST` which may change in release version. So, expect breaking changes in Ruby. Previous versions also supported, but without variable name in exception message.
 
 Known limitations:
 
@@ -131,7 +131,9 @@ class A
   using Typerb
 
   def initialize(arg1, arg2)
-    arg1.type!(Integer); arg2.type!(String) # no way to tell the variable - raise error message without variable name
+    arg1.type!(Integer); arg2.type!(String)
+    # no way to tell the variable - raise error message without variable name
+    # same error will be raised on Ruby < 2.6.0 because there is no RubyVM::AST
   end
 end
 ```
