@@ -1,6 +1,11 @@
 AllCops:
+  TargetRubyVersion: 2.3
   Exclude:
     - 'bin/**/*'
+
+inherit_mode:
+  merge:
+    - Exclude
 
 Style/CommentedKeyword:
   Enabled: false
@@ -13,6 +18,3 @@ Style/Semicolon:
 
 Metrics/LineLength:
   Max: 170
-
-Gemspec/RequiredRubyVersion:
-  Enabled: false
