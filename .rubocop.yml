@@ -3,6 +3,10 @@ AllCops:
   Exclude:
     - 'bin/**/*'
 
+inherit_mode:
+  merge:
+    - Exclude
+
 Style/CommentedKeyword:
   Enabled: false
 
