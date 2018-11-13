@@ -4,6 +4,10 @@ language: ruby
 cache: bundler
 before_install: gem install bundler
 
+rvm:
+  - 2.5.3
+#  - 2.6.0-preview3 travsi does not support it yet
+
 script:
   - bundle exec rubocop -DP
   - bundle exec rspec
