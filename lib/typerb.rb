@@ -37,9 +37,7 @@ module Typerb
       return if methods.all? { |meth| respond_to?(meth) }
 
       exception_text = "#{self.class} should respond to all methods: " + methods.join(', ')
-      exception = TypeError.new(exception_text)
-      exception.set_backtrace(caller)
-      raise exception
+      Typerb::Exceptional.new.raise_with(caller, exception_text)
     end
   end
 end
