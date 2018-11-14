@@ -166,7 +166,7 @@ RSpec.describe Typerb do # rubocop: disable Metrics/BlockLength
     expect(kls.new(1, '1').arg2).to eq '1'
   end
 
-  context "respond_to!" do
+  context 'respond_to!' do
     it 'raises TypeError if object does not respond to specified method' do
       kls = Class.new do
         using Typerb
@@ -177,7 +177,7 @@ RSpec.describe Typerb do # rubocop: disable Metrics/BlockLength
         end
       end
       expect { kls.new(123) }.to raise_error(TypeError, 'Integer should respond to all methods: strip')
-      expect { kls.new("foo") }.not_to raise_error
+      expect { kls.new('foo') }.not_to raise_error
     end
 
     it 'raises TypeError if object does not respond to specified methods' do
@@ -190,11 +190,7 @@ RSpec.describe Typerb do # rubocop: disable Metrics/BlockLength
         end
       end
       expect { kls.new(123) }.to raise_error(TypeError, 'Integer should respond to all methods: strip, downcase, chars')
-      expect { kls.new("foo") }.not_to raise_error
+      expect { kls.new('foo') }.not_to raise_error
     end
-
-
-
   end
-
 end

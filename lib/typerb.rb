@@ -41,6 +41,5 @@ module Typerb
       exception.set_backtrace(caller)
       raise exception
     end
-
   end
 end

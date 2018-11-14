@@ -9,7 +9,7 @@ Proof of concept type-checking library for Ruby 2.6. Works with previous version
 class A
   using Typerb
 
-  def strong_type_call(some_arg)
+  def call(some_arg)
     some_arg.type!(String, Symbol)
   end
 
@@ -26,7 +26,7 @@ A.new.call_with_respond_checks(1) #=> TypeError: 'Integer should respond to all 
 This is equivalent to:
 ```ruby
 class A
-  def strong_type_call(some_arg)
+  def call(some_arg)
     raise TypeError, "`some_arg` should be String or Symbol, not #{some_arg.class}" unless [String, Symbol].include?(some_arg.class)
   end
 
