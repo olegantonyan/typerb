@@ -12,9 +12,15 @@ class A
   def call(some_arg)
     some_arg.type!(String, Symbol)
   end
+
+  def call_with_respond_checks(some_arg)
+    some_arg.respond_to!(:strip)
+  end
+
 end
 
 A.new.call(1) #=> TypeError: `some_arg` should be String or Symbol, not Integer
+A.new.call_with_respond_checks(1) #=> TypeError: 'Integer should respond to all methods: strip'
 ```
 
 This is equivalent to:
@@ -22,6 +28,10 @@ This is equivalent to:
 class A
   def call(some_arg)
     raise TypeError, "`some_arg` should be String or Symbol, not #{some_arg.class}" unless [String, Symbol].include?(some_arg.class)
+  end
+
+  def call_with_respond_checks(some_arg)
+    raise TypeError, "#{some_arg.class} should respond to all methods: strip" unless [:strip].all{|meth| some_arg.respond_to?(meth)}
   end
 end
 ```
@@ -120,10 +130,10 @@ end
 [1] pry(main)*   using Typerb
 [1] pry(main)*   def call(a)
 [1] pry(main)*     a.type!(Hash)
-[1] pry(main)*   end  
-[1] pry(main)* end  
+[1] pry(main)*   end
+[1] pry(main)* end
 [2] pry(main)> A.new.call(1)
-TypeError: expected Hash, got Integer  
+TypeError: expected Hash, got Integer
 # here we cannot get the source code for a line containing "a.type!(Hash)", so cannot see the variable name
 ```
 

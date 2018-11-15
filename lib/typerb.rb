@@ -31,5 +31,13 @@ module Typerb
 
       Typerb::Exceptional.new.raise_with(caller, exception_text)
     end
+
+    def respond_to!(*methods)
+      raise ArgumentError, 'provide at least one method' if methods.empty?
+      return if methods.all? { |meth| respond_to?(meth) }
+
+      exception_text = "#{self.class} should respond to all methods: " + methods.join(', ')
+      Typerb::Exceptional.new.raise_with(caller, exception_text)
+    end
   end
 end

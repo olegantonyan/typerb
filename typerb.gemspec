@@ -25,6 +25,8 @@ Gem::Specification.new do |spec|
   spec.require_paths = ['lib']
 
   spec.add_development_dependency 'bundler', '>= 1.17'
+  spec.add_development_dependency 'guard'
+  spec.add_development_dependency 'guard-rspec'
   spec.add_development_dependency 'pry'
   spec.add_development_dependency 'rake', '>= 10.0'
   spec.add_development_dependency 'rspec', '>= 3.0'
