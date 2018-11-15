@@ -6,6 +6,10 @@ module Typerb
       def klasses_text(klasses)
         klasses.size > 1 ? klasses.map(&:name).join(' or ') : klasses.first.name
       end
+
+      def methods_text(methods)
+        methods.join(', ')
+      end
     end
 
     def raise_with(backtrace, exception_text)
