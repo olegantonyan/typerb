@@ -21,7 +21,7 @@ module Typerb
 
     def from_ast(caller_method) # rubocop: disable Metrics/AbcSize not worth fixing
       code = File.read(file).lines[line - 1].strip
-      node = RubyVM::AST.parse(code)
+      node = RubyVM::AbstractSyntaxTree.parse(code)
       if node.children.last.children.size == 3 && node.children.last.children[1] == caller_method # rubocop: disable Style/IfUnlessModifier, Style/GuardClause
         node.children.last.children.first.children.first
       end
