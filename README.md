@@ -52,6 +52,11 @@ end
 A.new.call(nil) #=> TypeError: expected not nil, but got nil
 ```
 
+## Why?
+
+1. Catch error as early as possible (especially nils);
+2. Additional documentation: you're telling other people more about interfaces.
+
 ## Installation
 
 Add this line to your application's Gemfile:

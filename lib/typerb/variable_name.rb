@@ -10,7 +10,7 @@ module Typerb
     end
 
     def get
-      return if RUBY_VERSION < '2.6.0'
+      return unless defined?(RubyVM::AbstractSyntaxTree)
       return unless File.exist?(file)
 
       caller_method = caller_locations(1, 1)[0].label.to_sym
