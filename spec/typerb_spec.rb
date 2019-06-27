@@ -220,7 +220,7 @@ RSpec.describe Typerb do # rubocop: disable Metrics/BlockLength
       if RUBY_VERSION >= '2.6.0'
         expect { kls.new(:three) }.to raise_error(TypeError, 'Symbol (`arg1`) should be one of: [one, two], not three')
       else
-        expect { kls.new(:three) }.to raise_error(TypeError, 'expected one of: [one, two], got three')
+        expect { kls.new(:three) }.to raise_error(TypeError, 'Symbol expected one of: [one, two], got three')
       end
       expect { kls.new(:one) }.not_to raise_error
     end
