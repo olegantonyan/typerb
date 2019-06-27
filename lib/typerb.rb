@@ -45,5 +45,19 @@ module Typerb
 
       Typerb::Exceptional.new.raise_with(caller, exception_text)
     end
+
+    def enum!(*elements)
+      raise ArgumentError, 'provide at least one enum element' if elements.empty?
+      return self if elements.include?(self)
+
+      elements_text = Typerb::Exceptional.elements_text(elements)
+      exception_text = if (var_name = Typerb::VariableName.new(caller_locations(1, 1)).get)
+                         "#{self.class} (`#{var_name}`) should be one of: #{elements_text}, not #{self}"
+                       else
+                         "#{self.class} expected one of: #{elements_text}, got #{self}"
+                       end
+
+      Typerb::Exceptional.new.raise_with(caller, exception_text)
+    end
   end
 end

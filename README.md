@@ -17,10 +17,14 @@ class A
     some_arg.respond_to!(:strip)
   end
 
+  def call_with_enum(arg)
+    arg.enum!(:one, :two)
+  end
 end
 
 A.new.call(1) #=> TypeError: `some_arg` should be String or Symbol, not Integer
 A.new.call_with_respond_checks(1) #=> TypeError: 'Integer should respond to all methods: strip'
+A.new.call_with_enum(:three) #=> TypeError: 'Symbol (`arg`) should be one of: [one, two], not three'
 ```
 
 This is equivalent to:

@@ -207,4 +207,22 @@ RSpec.describe Typerb do # rubocop: disable Metrics/BlockLength
       expect { kls.new('foo') }.not_to raise_error
     end
   end
+
+  context 'enum!' do
+    it 'enum! works' do
+      kls = Class.new do
+        using Typerb
+
+        def initialize(arg1)
+          arg1.enum!(:one, :two)
+        end
+      end
+      if RUBY_VERSION >= '2.6.0'
+        expect { kls.new(:three) }.to raise_error(TypeError, 'Symbol (`arg1`) should be one of: [one, two], not three')
+      else
+        expect { kls.new(:three) }.to raise_error(TypeError, 'expected one of: [one, two], got three')
+      end
+      expect { kls.new(:one) }.not_to raise_error
+    end
+  end
 end

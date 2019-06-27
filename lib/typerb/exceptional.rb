@@ -10,6 +10,10 @@ module Typerb
       def methods_text(methods)
         methods.join(', ')
       end
+
+      def elements_text(elements)
+        '[' + elements.join(', ') + ']'
+      end
     end
 
     def raise_with(backtrace, exception_text)
