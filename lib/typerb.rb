@@ -5,7 +5,7 @@ require 'typerb/variable_name'
 require 'typerb/exceptional'
 
 module Typerb
-  refine Object do
+  refine BasicObject do
     def type!(*klasses)
       raise ArgumentError, 'provide at least one class' if klasses.empty?
       return self if klasses.any? { |kls| is_a?(kls) }

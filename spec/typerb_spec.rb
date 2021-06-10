@@ -152,6 +152,19 @@ RSpec.describe Typerb do # rubocop: disable Metrics/BlockLength
       end
       expect { kls.new('hello') }.to raise_error(ArgumentError, 'provide at least one class')
     end
+
+    it 'works with BasicObject' do
+      require 'tempfile'
+      kls = Class.new do
+        using Typerb
+
+        def initialize(arg)
+          arg.type!(Tempfile)
+          @arg = arg
+        end
+      end
+      expect { kls.new(Tempfile.new) }.not_to raise_error
+    end
   end
 
   context 'not_nil!' do
