@@ -1,5 +1,5 @@
 AllCops:
-  TargetRubyVersion: 2.4
+  TargetRubyVersion: 3.1
   Exclude:
     - 'bin/**/*'
     - 'Guardfile'
@@ -15,6 +15,15 @@ Style/Documentation:
   Enabled: false
 
 Style/Semicolon:
+  Enabled: false
+
+Style/StringConcatenation:
+  Enabled: false
+
+Layout/SpaceAroundMethodCallOperator:
+  Enabled: false
+
+Gemspec/RequiredRubyVersion:
   Enabled: false
 
 Metrics/LineLength:
