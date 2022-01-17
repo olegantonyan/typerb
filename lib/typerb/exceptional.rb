@@ -14,6 +14,10 @@ module Typerb
       def elements_text(elements)
         '[' + elements.join(', ') + ']'
       end
+
+      def superset_text(enumerable)
+        enumerable.to_s
+      end
     end
 
     def raise_with(backtrace, exception_text)

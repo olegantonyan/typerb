@@ -20,11 +20,16 @@ class A
   def call_with_enum(arg)
     arg.enum!(:one, :two)
   end
+
+  def call_with_subset(arg)
+    arg.subset_of!([:one, :two])
+  end
 end
 
 A.new.call(1) #=> TypeError: `some_arg` should be String or Symbol, not Integer
 A.new.call_with_respond_checks(1) #=> TypeError: 'Integer should respond to all methods: strip'
 A.new.call_with_enum(:three) #=> TypeError: 'Symbol (`arg`) should be one of: [one, two], not three'
+A.new.call_with_subset([:one, :three]) #=> TypeError: 'Array (`arg`) should be subset of: [:one, :two], not [:one, :three]'
 ```
 
 This is equivalent to:
@@ -109,7 +114,7 @@ end
 
 If you're unfamiliar with `using` keyword - this is refinement - a relatively new feature in Ruby (since 2.0). It's kind of monkey-patch, but with strict scope. Learn more about [refinements](https://ruby-doc.org/core-2.5.3/doc/syntax/refinements_rdoc.html).
 
-This refinement adds `type!()` and `not_nil!` methods to `Object` class so you can call it on almost much any object (except those inherited from `BasicObject`, but these are rare).
+This refinement adds `type!()` and `not_nil!` methods to `BasicObject` class so you can call it on any object.
 
 The method will raise an exception if `self` is not an instance of one of the classes passed as arguments. The tricky part, however, is to get the variable name on which it's called. You need this to get a nice error message telling you exactly which variable has wrong type, not just an abstract `TypeError`. That's why we need Ruby 2.6 with its new `RubyVM::AST` (https://ruby-doc.org/core-2.6.0.preview3/RubyVM/AST.html).
 

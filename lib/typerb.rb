@@ -59,5 +59,20 @@ module Typerb
 
       Typerb::Exceptional.new.raise_with(caller, exception_text)
     end
+
+    def subset_of!(superset)
+      raise ArgumentError, 'superset must be Enumerable' unless superset.is_a?(Enumerable)
+      raise ArgumentError, 'provide at least one superset element' if superset.empty?
+      return self if (self - superset).empty?
+
+      superset_text = Typerb::Exceptional.superset_text(superset)
+      exception_text = if (var_name = Typerb::VariableName.new(caller_locations(1, 1)).get)
+                         "#{self.class} (`#{var_name}`) should be subset of: #{superset_text}, not #{self}"
+                       else
+                         "#{self.class} expected subset of: #{superset_text}, got #{self}"
+                       end
+
+      Typerb::Exceptional.new.raise_with(caller, exception_text)
+    end
   end
 end
