@@ -1,4 +1,5 @@
 [![Gem Version](https://badge.fury.io/rb/typerb.svg)](https://badge.fury.io/rb/typerb)
+[![CI RSpec & Rubocop](https://github.com/olegantonyan/typerb/actions/workflows/tests.yml/badge.svg)](https://github.com/olegantonyan/typerb/actions/workflows/tests.yml)
 
 # Typerb
 
