@@ -1,5 +1,4 @@
 [![Gem Version](https://badge.fury.io/rb/typerb.svg)](https://badge.fury.io/rb/typerb)
-[![Build Status](https://travis-ci.org/olegantonyan/typerb.svg?branch=master)](https://travis-ci.org/olegantonyan/typerb)
 
 # Typerb
 
