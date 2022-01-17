@@ -1,5 +1,7 @@
 AllCops:
   TargetRubyVersion: 3.1
+  NewCops: enable
+  SuggestExtensions: false
   Exclude:
     - 'bin/**/*'
     - 'Guardfile'
@@ -26,5 +28,8 @@ Layout/SpaceAroundMethodCallOperator:
 Gemspec/RequiredRubyVersion:
   Enabled: false
 
-Metrics/LineLength:
+Layout/LineLength:
   Max: 170
+
+Gemspec/RequireMFA:
+  Enabled: false
