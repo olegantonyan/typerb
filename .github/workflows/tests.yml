@@ -10,15 +10,15 @@ jobs:
       matrix:
         ruby-version: [2.4.x, 2.5.x, 2.6.x, 2.7.x, 3.0.x, 3.1.x]
 
-      steps:
-        - uses: actions/checkout@v2
-        - name: Set up Ruby ${{ matrix.ruby-version }}
-          uses: ruby/setup-ruby@477b21f02be01bcb8030d50f37cfec92bfa615b6
-          with:
-            ruby-version: ${{ matrix.ruby-version }}
-        - name: Install dependencies
-          run: bundle install
-        - name: Run Rubocop
-          run: bundle exec rubocop -DP
-        - name: Run tests
-          run: bundle exec rspec
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Ruby ${{ matrix.ruby-version }}
+        uses: ruby/setup-ruby@477b21f02be01bcb8030d50f37cfec92bfa615b6
+        with:
+          ruby-version: ${{ matrix.ruby-version }}
+      - name: Install dependencies
+        run: bundle install
+      - name: Run Rubocop
+        run: bundle exec rubocop -DP
+      - name: Run tests
+        run: bundle exec rspec
