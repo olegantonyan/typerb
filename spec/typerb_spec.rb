@@ -245,13 +245,13 @@ RSpec.describe Typerb do # rubocop: disable Metrics/BlockLength
         using Typerb
 
         def initialize(arg1)
-          arg1.subset_of!([:one, :two])
+          arg1.subset_of!(%i[one two])
         end
       end
       if RUBY_VERSION >= '2.6.0'
-        expect { kls.new([:three, :one]) }.to raise_error(TypeError, 'Array (`arg1`) should be subset of: [:one, :two], not [:three, :one]')
+        expect { kls.new(%i[three one]) }.to raise_error(TypeError, 'Array (`arg1`) should be subset of: [:one, :two], not [:three, :one]')
       else
-        expect { kls.new([:three, :one]) }.to raise_error(TypeError, 'Array expected subset of: [:one, :two], got [:three, :one]')
+        expect { kls.new(%i[three one]) }.to raise_error(TypeError, 'Array expected subset of: [:one, :two], got [:three, :one]')
       end
       expect { kls.new([:one]) }.not_to raise_error
     end
