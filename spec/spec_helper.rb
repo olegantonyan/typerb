@@ -2,7 +2,6 @@
 
 require 'bundler/setup'
 require 'typerb'
-require 'super_awesome_print'
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure

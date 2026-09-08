@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
-lib = File.expand_path('lib', __dir__)
-$LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'typerb/version'
+require_relative 'lib/typerb/version'
 
 Gem::Specification.new do |spec|
   spec.name          = 'typerb'
@@ -11,27 +9,19 @@ Gem::Specification.new do |spec|
   spec.email         = ['oleg.b.antonyan@gmail.com']
 
   spec.summary       = 'Typecheck sugar for Ruby.'
-  spec.description   = 'Typecheck sugar for Ruby.'
+  spec.description   = 'Refinement adding type!, not_nil!, respond_to!, enum! and subset_of! assertions that name the variable they failed on.'
   spec.homepage      = 'https://github.com/olegantonyan/typerb'
   spec.license       = 'MIT'
 
-  # Specify which files should be added to the gem when it is released.
-  # The `git ls-files -z` loads the files in the RubyGem that have been added into git.
-  spec.files         = Dir.chdir(File.expand_path(__dir__)) do
-    `git ls-files -z`.split("\x0").reject { |f| f.match(%r{^(test|spec|features)/}) }
-  end
-  spec.bindir        = 'exe'
-  spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
+  spec.files         = Dir['lib/**/*.rb'] + %w[README.md CHANGELOG.md LICENSE.txt CODE_OF_CONDUCT.md]
   spec.require_paths = ['lib']
 
-  spec.add_development_dependency 'bundler', '>= 1.17'
-  spec.add_development_dependency 'guard'
-  spec.add_development_dependency 'guard-rspec'
-  spec.add_development_dependency 'pry'
-  spec.add_development_dependency 'rake', '>= 10.0'
-  spec.add_development_dependency 'rspec', '>= 3.0'
-  spec.add_development_dependency 'rubocop'
-  spec.add_development_dependency 'super_awesome_print'
+  spec.required_ruby_version = '>= 3.0'
 
-  spec.required_ruby_version = '>= 2.4'
+  spec.metadata = {
+    'source_code_uri' => spec.homepage,
+    'changelog_uri' => "#{spec.homepage}/blob/master/CHANGELOG.md",
+    'bug_tracker_uri' => "#{spec.homepage}/issues",
+    'rubygems_mfa_required' => 'true'
+  }
 end

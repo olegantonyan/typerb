@@ -1,10 +1,9 @@
 AllCops:
-  TargetRubyVersion: 3.1
+  TargetRubyVersion: 3.0
   NewCops: enable
   SuggestExtensions: false
   Exclude:
     - 'bin/**/*'
-    - 'Guardfile'
 
 inherit_mode:
   merge:
@@ -25,11 +24,13 @@ Style/StringConcatenation:
 Layout/SpaceAroundMethodCallOperator:
   Enabled: false
 
-Gemspec/RequiredRubyVersion:
-  Enabled: false
-
 Layout/LineLength:
   Max: 170
 
-Gemspec/RequireMFA:
-  Enabled: false
+Metrics/BlockLength:
+  Exclude:
+    - 'spec/**/*'
+
+Style/GlobalVars:
+  Exclude:
+    - 'spec/**/*'

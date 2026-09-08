@@ -1,30 +1,34 @@
 # frozen_string_literal: true
 
+require 'typerb/prism_parser'
+require 'typerb/ruby_vm_parser'
+
 module Typerb
   class VariableName
-    attr_reader :file, :line
+    BACKENDS = [PrismParser, RubyVmParser].freeze
 
-    def initialize(caller_loc)
-      @file = caller_loc[0].path
-      @line = caller_loc[0].lineno
+    attr_reader :file, :line, :method_name
+
+    def initialize(location, method_name)
+      @file = location&.path
+      @line = location&.lineno
+      @method_name = method_name
     end
 
     def get
-      return unless defined?(RubyVM::AbstractSyntaxTree)
-      return unless File.exist?(file)
+      return unless backend
+      return unless file && line && File.exist?(file)
 
-      caller_method = caller_locations(1, 1)[0].label.to_sym
-      from_ast(caller_method)
+      receivers = backend.receiver_sources(file, line, method_name)
+      receivers.first if receivers.size == 1
+    rescue StandardError, ScriptError
+      nil
     end
 
     private
 
-    def from_ast(caller_method) # rubocop: disable Metrics/AbcSize not worth fixing
-      code = File.read(file).lines[line - 1].strip
-      node = RubyVM::AbstractSyntaxTree.parse(code)
-      if node.children.last.children.size == 3 && node.children.last.children[1] == caller_method # rubocop: disable Style/IfUnlessModifier, Style/GuardClause
-        node.children.last.children.first.children.first
-      end
+    def backend
+      BACKENDS.find(&:available?)
     end
   end
 end

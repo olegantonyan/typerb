@@ -1,9 +1,9 @@
 [![Gem Version](https://badge.fury.io/rb/typerb.svg)](https://badge.fury.io/rb/typerb)
-[![CI RSpec & Rubocop](https://github.com/olegantonyan/typerb/actions/workflows/tests.yml/badge.svg)](https://github.com/olegantonyan/typerb/actions/workflows/tests.yml)
+[![CI](https://github.com/olegantonyan/typerb/actions/workflows/tests.yml/badge.svg)](https://github.com/olegantonyan/typerb/actions/workflows/tests.yml)
 
 # Typerb
 
-Proof of concept type-checking library for Ruby 2.6. Works with previous versions too with some limitation (see below).
+Typecheck sugar for Ruby. Requires Ruby 3.0 or newer.
 
 ```ruby
 class A
@@ -22,32 +22,33 @@ class A
   end
 
   def call_with_subset(arg)
-    arg.subset_of!([:one, :two])
+    arg.subset_of!(%i[one two])
   end
 end
 
-A.new.call(1) #=> TypeError: `some_arg` should be String or Symbol, not Integer
-A.new.call_with_respond_checks(1) #=> TypeError: 'Integer should respond to all methods: strip'
-A.new.call_with_enum(:three) #=> TypeError: 'Symbol (`arg`) should be one of: [one, two], not three'
-A.new.call_with_subset([:one, :three]) #=> TypeError: 'Array (`arg`) should be subset of: [:one, :two], not [:one, :three]'
+A.new.call(1)                              #=> TypeError: `some_arg` should be String or Symbol, not Integer (1)
+A.new.call_with_respond_checks(1)          #=> TypeError: Integer (`some_arg`) should respond to all methods: strip
+A.new.call_with_enum(:three)               #=> TypeError: Symbol (`arg`) should be one of: [one, two], not three
+A.new.call_with_subset(%i[one three])      #=> TypeError: Array (`arg`) should be subset of: [:one, :two], not [:one, :three]
 ```
 
 This is equivalent to:
+
 ```ruby
 class A
   def call(some_arg)
-    raise TypeError, "`some_arg` should be String or Symbol, not #{some_arg.class}" unless [String, Symbol].include?(some_arg.class)
+    raise TypeError, "`some_arg` should be String or Symbol, not #{some_arg.class}" unless some_arg.is_a?(String) || some_arg.is_a?(Symbol)
   end
 
   def call_with_respond_checks(some_arg)
-    raise TypeError, "#{some_arg.class} should respond to all methods: strip" unless [:strip].all{|meth| some_arg.respond_to?(meth)}
+    raise TypeError, "#{some_arg.class} should respond to all methods: strip" unless %i[strip].all? { |meth| some_arg.respond_to?(meth) }
   end
 end
 ```
 
-But without boilerplate.
+But without the boilerplate.
 
-It also has `not_nil!` method, similar to Crystal language.
+There is also a `not_nil!` method, similar to the Crystal language.
 
 ```ruby
 class A
@@ -58,13 +59,15 @@ class A
   end
 end
 
-A.new.call(nil) #=> TypeError: expected not nil, but got nil
+A.new.call(nil) #=> TypeError: `some_arg` should not be nil
 ```
+
+Every method returns `self` when the check passes, so checks can be chained or inlined into assignments.
 
 ## Why?
 
-1. Catch error as early as possible (especially nils);
-2. Additional documentation: you're telling other people more about interfaces.
+1. Catch errors as early as possible (especially nils);
+2. Additional documentation: you're telling other people more about your interfaces.
 
 ## Installation
 
@@ -82,20 +85,9 @@ Or install it yourself as:
 
     $ gem install typerb
 
-If this fails with error
-```
-ERROR:  Error installing typerb:
-        There are no versions of typerb (>= 0) compatible with your Ruby & RubyGems
-        typerb requires Ruby version >= 2.6.0.pre.preview3. The current ruby version is 2.6.0.
-```
-even when you have Ruby 2.6.0-preview3 installed, then try installing it through Gemfile from git:
-```ruby
-gem 'typerb', github: 'olegantonyan/typerb'
-```
-
 ## Usage
 
-1. Add `using Typerb` to a class where you want to have type check.
+1. Add `using Typerb` to a class where you want to have type checks.
 2. Call `.type!()` on any object to assert its type.
 3. PROFIT! No more "NoMethodError for nil" 10 methods up the stack. You'll know exactly where this nil came from.
 
@@ -112,33 +104,44 @@ class A
 end
 ```
 
-If you're unfamiliar with `using` keyword - this is refinement - a relatively new feature in Ruby (since 2.0). It's kind of monkey-patch, but with strict scope. Learn more about [refinements](https://ruby-doc.org/core-2.5.3/doc/syntax/refinements_rdoc.html).
+If you're unfamiliar with the `using` keyword - this is a refinement, a kind of monkey patch with a strict
+scope. Learn more about [refinements](https://docs.ruby-lang.org/en/master/syntax/refinements_rdoc.html).
 
-This refinement adds `type!()` and `not_nil!` methods to `BasicObject` class so you can call it on any object.
+The refinement adds `type!`, `not_nil!`, `respond_to!`, `enum!` and `subset_of!` to `BasicObject`, so
+they can be called on any object.
 
-The method will raise an exception if `self` is not an instance of one of the classes passed as arguments. The tricky part, however, is to get the variable name on which it's called. You need this to get a nice error message telling you exactly which variable has wrong type, not just an abstract `TypeError`. That's why we need Ruby 2.6 with its new `RubyVM::AST` (https://ruby-doc.org/core-2.6.0.preview3/RubyVM/AST.html).
+`type!` raises a `TypeError` unless `self` is an instance of one of the classes passed as arguments.
+The tricky part is getting the name of the variable it was called on, so that the error message points at
+the exact variable instead of being an abstract `TypeError`. Typerb does that by parsing the source file
+of the caller: with [Prism](https://github.com/ruby/prism) on Ruby 3.3+, and with `RubyVM::AbstractSyntaxTree`
+on older versions. If neither is available, or the source cannot be read, the check still works - the message
+just doesn't name the variable.
+
+| Ruby      | Parser                       |
+| --------- | ---------------------------- |
+| 3.3+      | Prism                        |
+| 3.0 - 3.2 | `RubyVM::AbstractSyntaxTree` |
+
+Both parsers produce the same messages, and CI runs the suite against every supported version.
 
 ## Limitations
 
-Full functionality Ruby 2.6.0-preview3. Relies on `RubyVM::AST` which may change in release version. So, expect breaking changes in Ruby. Previous versions also supported, but without variable name in exception message.
+The variable name is omitted (the check itself still works) in two cases.
 
-Known limitations:
+1. Several checks on the same line - there is no way to tell which one raised:
 
-1. Multi-line method call:
 ```ruby
 class A
   using Typerb
 
-  def call(some_arg)
-    some_arg.
-            type!(String)
-    # this won't work. type!() call must be on the same line with the variable it's called on - raise error message without variable name
-    # some_arg.    type!(String) is ok though
+  def initialize(arg1, arg2)
+    arg1.type!(Integer); arg2.type!(String)
   end
 end
 ```
 
-2. Method defined in console:
+2. Code whose source file cannot be read - `eval`, a console session, or a file deleted after being loaded:
+
 ```ruby
 [1] pry(main)> class A
 [1] pry(main)*   using Typerb
@@ -147,34 +150,26 @@ end
 [1] pry(main)*   end
 [1] pry(main)* end
 [2] pry(main)> A.new.call(1)
-TypeError: expected Hash, got Integer
-# here we cannot get the source code for a line containing "a.type!(Hash)", so cannot see the variable name
+TypeError: expected Hash, got Integer (1)
 ```
 
-3. Multiple arguments on the same line:
-```ruby
-class A
-  using Typerb
-
-  def initialize(arg1, arg2)
-    arg1.type!(Integer); arg2.type!(String)
-    # no way to tell the variable - raise error message without variable name
-    # same error will be raised on Ruby < 2.6.0 because there is no RubyVM::AST
-  end
-end
-```
-
-These limitations shouldn't be a problem in any case. Please, file an issue if you know a scenario where one of these could be a real problem.
+Please file an issue if you know a scenario where one of these is a real problem.
 
 ## Development
 
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
+After checking out the repo, run `bin/setup` to install dependencies. Then run `rake spec` to run the tests.
+You can also run `bin/console` for an interactive prompt that will allow you to experiment.
 
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+To install this gem onto your local machine, run `bundle exec rake install`. To release a new version,
+update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git
+tag for the version, push git commits and tags, and push the `.gem` file to
+[rubygems.org](https://rubygems.org).
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/olegantonyan/typerb. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
+Bug reports and pull requests are welcome on GitHub at https://github.com/olegantonyan/typerb. This project
+is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the
+[Contributor Covenant](http://contributor-covenant.org) code of conduct.
 
 ## License
 
@@ -182,4 +177,5 @@ The gem is available as open source under the terms of the [MIT License](https:/
 
 ## Code of Conduct
 
-Everyone interacting in the Typerb project’s codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/olegantonyan/typerb/blob/master/CODE_OF_CONDUCT.md).
+Everyone interacting in the Typerb project's codebases, issue trackers, chat rooms and mailing lists is
+expected to follow the [code of conduct](https://github.com/olegantonyan/typerb/blob/master/CODE_OF_CONDUCT.md).

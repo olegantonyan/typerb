@@ -1,27 +1,11 @@
 # frozen_string_literal: true
 
+require 'typerb/variable_name'
+
 module Typerb
-  class Exceptional # NOTE: don't want to collide with 'Exception' class name
-    class << self
-      def klasses_text(klasses)
-        klasses.size > 1 ? klasses.map(&:name).join(' or ') : klasses.first.name
-      end
-
-      def methods_text(methods)
-        methods.join(', ')
-      end
-
-      def elements_text(elements)
-        '[' + elements.join(', ') + ']'
-      end
-
-      def superset_text(enumerable)
-        enumerable.to_s
-      end
-    end
-
-    def raise_with(backtrace, exception_text)
-      exception = TypeError.new(exception_text)
+  module Exceptional # NOTE: don't want to collide with 'Exception' class name
+    def self.raise_type_error(backtrace, location, method_name)
+      exception = TypeError.new(yield(VariableName.new(location, method_name).get))
       exception.set_backtrace(backtrace)
       raise exception
     end
