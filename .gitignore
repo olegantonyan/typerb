@@ -4,12 +4,8 @@
 /coverage/
 /doc/
 /pkg/
-/spec/reports/
 /tmp/
 /vendor/
 *.gem
-
-# rspec failure tracking
-.rspec_status
 
 .ruby-version

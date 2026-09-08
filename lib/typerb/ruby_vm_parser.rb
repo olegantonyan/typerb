@@ -5,7 +5,7 @@ require 'typerb/source_cache'
 module Typerb
   module RubyVmParser
     CALL_TYPES = %i[CALL QCALL].freeze
-    RECEIVER_TYPES = %i[LVAR DVAR IVAR CVAR GVAR CONST COLON2 COLON3 CALL QCALL VCALL FCALL OPCALL].freeze
+    RECEIVER_TYPES = %i[LVAR DVAR IVAR CVAR GVAR CONST COLON2 COLON3 CALL QCALL VCALL FCALL OPCALL ITER].freeze
 
     class << self
       def available?
@@ -46,7 +46,7 @@ module Typerb
         return nil unless receiver.first_lineno == receiver.last_lineno
 
         line = lines(file)[receiver.first_lineno - 1]
-        line && line[receiver.first_column...receiver.last_column]
+        line&.byteslice(receiver.first_column...receiver.last_column) # AST columns are byte offsets
       end
 
       def lines(file)

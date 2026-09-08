@@ -9,6 +9,7 @@
 - Variable name is now reported for multi-line calls, assignments, string interpolation and chained
   receivers (`h.fetch(:a).type!(String)`).
 - `subset_of!` raises `ArgumentError` instead of `NoMethodError` when the receiver is not `Enumerable`.
+- Variable names are reported correctly on lines containing multibyte characters.
 - Minimum Ruby is 3.0.
 - Removed Guard from development dependencies.
 

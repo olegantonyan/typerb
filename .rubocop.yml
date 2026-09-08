@@ -27,10 +27,29 @@ Layout/SpaceAroundMethodCallOperator:
 Layout/LineLength:
   Max: 170
 
-Metrics/BlockLength:
-  Exclude:
-    - 'spec/**/*'
+Gemspec/DevelopmentDependencies:
+  EnforcedStyle: gemspec
 
-Style/GlobalVars:
+Style:
   Exclude:
-    - 'spec/**/*'
+    - 'test/**/*'
+
+Layout:
+  Exclude:
+    - 'test/**/*'
+
+Metrics:
+  Exclude:
+    - 'test/**/*'
+
+Lint/UselessRescue:
+  Exclude:
+    - 'test/**/*'
+
+Naming/AsciiIdentifiers:
+  Exclude:
+    - 'test/**/*'
+
+Security/Eval:
+  Exclude:
+    - 'test/**/*'
