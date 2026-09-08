@@ -5,7 +5,7 @@ require 'typerb/source_cache'
 module Typerb
   module RubyVmParser
     CALL_TYPES = %i[CALL QCALL].freeze
-    RECEIVER_TYPES = %i[LVAR DVAR IVAR CVAR GVAR CONST COLON2 COLON3 CALL QCALL VCALL FCALL OPCALL ITER].freeze
+    RECEIVER_TYPES = %i[LVAR DVAR IVAR CVAR GVAR CONST COLON2 COLON3 CALL QCALL VCALL FCALL ITER].freeze
 
     class << self
       def available?
