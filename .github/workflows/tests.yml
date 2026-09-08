@@ -26,6 +26,8 @@ jobs:
     name: rspec ruby ${{ matrix.ruby }}
     steps:
       - uses: actions/checkout@v6
+      - name: Resolve dependencies for this Ruby
+        run: rm -f Gemfile.lock
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby }}
